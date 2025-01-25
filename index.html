@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Report Peer Review Form</title>
+    <!-- Add the new required libraries -->
+    <script src="https://unpkg.com/docx@8.2.3/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -198,80 +201,245 @@
             <textarea placeholder="Explain your rating" name="ratingExplanation"></textarea>
         </div>
 
-        <button type="submit">Download Review</button>
+        <button type="button" onclick="generateWordDoc()">Download as Word Document</button>
     </form>
 
     <script>
-        function convertToCSV(objArray) {
-            const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
-            let str = `${Object.keys(array[0]).map(value => `"${value}"`).join(",")}` + '\r\n';
+        async function generateWordDoc() {
+            const form = document.getElementById('peerReviewForm');
+            const formData = new FormData(form);
 
-            return array.reduce((str, next) => {
-                str += `${Object.values(next).map(value => `"${value}"`).join(",")}` + '\r\n';
-                return str;
-            }, str);
-        }
+            // Create document
+            const doc = new docx.Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Interview Report Peer Review",
+                                    bold: true,
+                                    size: 32,
+                                }),
+                            ],
+                            spacing: {
+                                after: 400,
+                            },
+                        }),
 
-        function downloadCSV(csvContent, fileName) {
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", fileName);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
+                        // Basic Information
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `Reviewer: ${formData.get('reviewerName')}`,
+                                    size: 24,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `Writer: ${formData.get('writerName')}`,
+                                    size: 24,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `Date: ${formData.get('date')}`,
+                                    size: 24,
+                                }),
+                            ],
+                            spacing: {
+                                after: 400,
+                            },
+                        }),
 
-        document.getElementById('peerReviewForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
-            const data = {};
-            
-            // Convert form data to object
-            for (let [key, value] of formData.entries()) {
-                if (key.startsWith('checkbox_')) {
-                    // Handle checkboxes
-                    if (!data[key]) {
-                        data[key] = [];
-                    }
-                    data[key].push(value);
-                } else {
-                    // Handle other form elements
-                    data[key] = value;
-                }
-            }
+                        // Part 1: Structure and Content
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Part 1: Structure and Content Check",
+                                    bold: true,
+                                    size: 28,
+                                }),
+                            ],
+                            spacing: {
+                                after: 200,
+                            },
+                        }),
 
-            // Create filename with reviewer name, writer name, and date
+                        // Opening Statement
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Opening Statement",
+                                    bold: true,
+                                    size: 24,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `☐ Includes essential information about interviewee: ${formData.get('opening_essentialInfo') ? '✓' : ''}`,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `☐ Contains clear position statement: ${formData.get('opening_positionStatement') ? '✓' : ''}`,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Comments: ",
+                                    bold: true,
+                                }),
+                                new docx.TextRun({
+                                    text: formData.get('openingComments'),
+                                }),
+                            ],
+                            spacing: {
+                                after: 200,
+                            },
+                        }),
+
+                        // Methodology Section
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Methodology Section",
+                                    bold: true,
+                                    size: 24,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `☐ Describes interview length: ${formData.get('methodology_length') ? '✓' : ''}`,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `☐ Describes interview location: ${formData.get('methodology_location') ? '✓' : ''}`,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Comments: ",
+                                    bold: true,
+                                }),
+                                new docx.TextRun({
+                                    text: formData.get('methodologyComments'),
+                                }),
+                            ],
+                            spacing: {
+                                after: 200,
+                            },
+                        }),
+
+                        // Technical Elements
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Part 2: Technical Elements",
+                                    bold: true,
+                                    size: 28,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `Word Count: ${formData.get('wordCount')}`,
+                                }),
+                            ],
+                        }),
+
+                        // Recommendations
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Recommendations",
+                                    bold: true,
+                                    size: 28,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "1. " + formData.get('recommendation1'),
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "2. " + formData.get('recommendation2'),
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "3. " + formData.get('recommendation3'),
+                                }),
+                            ],
+                        }),
+
+                        // Overall Assessment
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Overall Assessment",
+                                    bold: true,
+                                    size: 28,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: `Rating: ${formData.get('effectiveness')}`,
+                                }),
+                            ],
+                        }),
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({
+                                    text: "Explanation: " + formData.get('ratingExplanation'),
+                                }),
+                            ],
+                        }),
+                    ],
+                }],
+            });
+
+            // Generate and save document
             const reviewerName = formData.get('reviewerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
             const writerName = formData.get('writerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
             const date = new Date().toISOString().split('T')[0];
-            const fileName = `peer_review_${reviewerName}_${writerName}_${date}.csv`;
-
-            // Convert to CSV and download
-            const csvContent = convertToCSV([data]);
-            downloadCSV(csvContent, fileName);
-
-            // Optional: Reset form
-            if (confirm('Review downloaded! Would you like to clear the form?')) {
-                this.reset();
-            }
-        });
-
-        // Add timestamp to form submission
-        document.getElementById('peerReviewForm').addEventListener('submit', function(e) {
-            const timestamp = new Date().toISOString();
-            const timestampInput = document.createElement('input');
-            timestampInput.type = 'hidden';
-            timestampInput.name = 'timestamp';
-            timestampInput.value = timestamp;
-            this.appendChild(timestampInput);
-        });
+            
+            docx.Packer.toBlob(doc).then(blob => {
+                saveAs(blob, `peer_review_${reviewerName}_${writerName}_${date}.docx`);
+                
+                // Optional: Reset form
+                if (confirm('Review downloaded! Would you like to clear the form?')) {
+                    form.reset();
+                }
+            });
+        }
     </script>
 </body>
 </html>
