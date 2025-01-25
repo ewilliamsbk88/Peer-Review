@@ -29,7 +29,7 @@
             border-radius: 4px;
             min-height: 60px;
         }
-        input[type="text"] {
+        input[type="text"], input[type="number"], input[type="date"] {
             width: 100%;
             padding: 8px;
             margin: 5px 0;
@@ -59,6 +59,10 @@
             border-bottom: 2px solid #2c3e50;
             padding-bottom: 5px;
         }
+        .required::after {
+            content: " *";
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -66,11 +70,14 @@
         <h1>Interview Report Peer Review Form</h1>
         
         <div class="form-section">
-            <label for="reviewerName">Reviewer's Name:</label>
+            <label for="reviewerName" class="required">Reviewer's Name:</label>
             <input type="text" id="reviewerName" name="reviewerName" required>
             
-            <label for="writerName">Writer's Name:</label>
+            <label for="writerName" class="required">Writer's Name:</label>
             <input type="text" id="writerName" name="writerName" required>
+            
+            <label for="date" class="required">Date:</label>
+            <input type="date" id="date" name="date" required>
         </div>
 
         <div class="form-section">
@@ -78,29 +85,55 @@
             
             <h3>Opening Statement</h3>
             <div class="checkbox-group">
-                <input type="checkbox" id="essentialInfo" name="essentialInfo">
+                <input type="checkbox" id="essentialInfo" name="opening_essentialInfo">
                 <label for="essentialInfo">Includes essential information about interviewee</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="positionStatement" name="positionStatement">
+                <input type="checkbox" id="positionStatement" name="opening_positionStatement">
                 <label for="positionStatement">Contains clear position statement</label>
             </div>
             <textarea placeholder="Comments on Opening Statement" name="openingComments"></textarea>
 
             <h3>Methodology Section</h3>
             <div class="checkbox-group">
-                <input type="checkbox" id="interviewLength" name="interviewLength">
+                <input type="checkbox" id="interviewLength" name="methodology_length">
                 <label for="interviewLength">Describes interview length</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="interviewLocation" name="interviewLocation">
+                <input type="checkbox" id="interviewLocation" name="methodology_location">
                 <label for="interviewLocation">Describes interview location</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="interviewProcess" name="interviewProcess">
+                <input type="checkbox" id="interviewProcess" name="methodology_process">
                 <label for="interviewProcess">Explains interview process clearly</label>
             </div>
             <textarea placeholder="Comments on Methodology" name="methodologyComments"></textarea>
+
+            <h3>Issues and Conclusions</h3>
+            <div class="checkbox-group">
+                <input type="checkbox" id="keyTopics" name="issues_keyTopics">
+                <label for="keyTopics">Presents key topics from interview</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="supportedPosition" name="issues_supportedPosition">
+                <label for="supportedPosition">Supports position with evidence</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="relevantInfo" name="issues_relevantInfo">
+                <label for="relevantInfo">Information is relevant to new students</label>
+            </div>
+            <textarea placeholder="Comments on Issues and Conclusions" name="issuesComments"></textarea>
+
+            <h3>Closing Statement/Call to Action</h3>
+            <div class="checkbox-group">
+                <input type="checkbox" id="clearSteps" name="closing_clearSteps">
+                <label for="clearSteps">Provides clear next steps</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="audienceNeeds" name="closing_audienceNeeds">
+                <label for="audienceNeeds">Connects to target audience needs</label>
+            </div>
+            <textarea placeholder="Comments on Closing" name="closingComments"></textarea>
         </div>
 
         <div class="form-section">
@@ -110,15 +143,15 @@
             
             <h3>Format Review</h3>
             <div class="checkbox-group">
-                <input type="checkbox" id="readableFont" name="readableFont">
+                <input type="checkbox" id="readableFont" name="format_readableFont">
                 <label for="readableFont">Readable font size</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="singleSpaced" name="singleSpaced">
+                <input type="checkbox" id="singleSpaced" name="format_singleSpaced">
                 <label for="singleSpaced">Single-spaced</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="professionalHeadings" name="professionalHeadings">
+                <input type="checkbox" id="professionalHeadings" name="format_professionalHeadings">
                 <label for="professionalHeadings">Professional headings/subheadings</label>
             </div>
         </div>
@@ -165,20 +198,79 @@
             <textarea placeholder="Explain your rating" name="ratingExplanation"></textarea>
         </div>
 
-        <button type="submit">Submit Review</button>
+        <button type="submit">Download Review</button>
     </form>
 
     <script>
+        function convertToCSV(objArray) {
+            const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+            let str = `${Object.keys(array[0]).map(value => `"${value}"`).join(",")}` + '\r\n';
+
+            return array.reduce((str, next) => {
+                str += `${Object.values(next).map(value => `"${value}"`).join(",")}` + '\r\n';
+                return str;
+            }, str);
+        }
+
+        function downloadCSV(csvContent, fileName) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", fileName);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
         document.getElementById('peerReviewForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // Here you could add functionality to save or email the form
-            alert('Review submitted! In a real implementation, this would save or send the data.');
             
-            // Optional: Print form data to console for demonstration
+            // Get form data
             const formData = new FormData(this);
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
+            const data = {};
+            
+            // Convert form data to object
+            for (let [key, value] of formData.entries()) {
+                if (key.startsWith('checkbox_')) {
+                    // Handle checkboxes
+                    if (!data[key]) {
+                        data[key] = [];
+                    }
+                    data[key].push(value);
+                } else {
+                    // Handle other form elements
+                    data[key] = value;
+                }
             }
+
+            // Create filename with reviewer name, writer name, and date
+            const reviewerName = formData.get('reviewerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const writerName = formData.get('writerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const date = new Date().toISOString().split('T')[0];
+            const fileName = `peer_review_${reviewerName}_${writerName}_${date}.csv`;
+
+            // Convert to CSV and download
+            const csvContent = convertToCSV([data]);
+            downloadCSV(csvContent, fileName);
+
+            // Optional: Reset form
+            if (confirm('Review downloaded! Would you like to clear the form?')) {
+                this.reset();
+            }
+        });
+
+        // Add timestamp to form submission
+        document.getElementById('peerReviewForm').addEventListener('submit', function(e) {
+            const timestamp = new Date().toISOString();
+            const timestampInput = document.createElement('input');
+            timestampInput.type = 'hidden';
+            timestampInput.name = 'timestamp';
+            timestampInput.value = timestamp;
+            this.appendChild(timestampInput);
         });
     </script>
 </body>
