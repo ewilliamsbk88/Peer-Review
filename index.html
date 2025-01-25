@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Report Peer Review Form</title>
     <!-- Add the new required libraries -->
-    <script src="https://unpkg.com/docx@8.2.3/build/index.js"></script>
+    <script src="https://unpkg.com/@docx/html@1.0.1/dist/html.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.3/docx.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -201,13 +203,21 @@
             <textarea placeholder="Explain your rating" name="ratingExplanation"></textarea>
         </div>
 
-        <button type="button" onclick="generateWordDoc()">Download as Word Document</button>
+       <button type="button" onclick="generateWordDoc()" style="margin: 20px 0;">Download as Word Document</button>
     </form>
 
     <script>
-        async function generateWordDoc() {
+      <script>
+    async function generateWordDoc() {
+        console.log('Starting document generation...'); // Debug line
+        try {
             const form = document.getElementById('peerReviewForm');
+            if (!form) {
+                console.error('Form not found');
+                return;
+            }
             const formData = new FormData(form);
+            console.log('Form data collected'); // Debug line
 
             // Create document
             const doc = new docx.Document({
@@ -301,7 +311,7 @@
                                     bold: true,
                                 }),
                                 new docx.TextRun({
-                                    text: formData.get('openingComments'),
+                                    text: formData.get('openingComments') || '',
                                 }),
                             ],
                             spacing: {
@@ -340,91 +350,18 @@
                                     bold: true,
                                 }),
                                 new docx.TextRun({
-                                    text: formData.get('methodologyComments'),
+                                    text: formData.get('methodologyComments') || '',
                                 }),
                             ],
                             spacing: {
                                 after: 200,
                             },
                         }),
-
-                        // Technical Elements
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Part 2: Technical Elements",
-                                    bold: true,
-                                    size: 28,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `Word Count: ${formData.get('wordCount')}`,
-                                }),
-                            ],
-                        }),
-
-                        // Recommendations
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Recommendations",
-                                    bold: true,
-                                    size: 28,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "1. " + formData.get('recommendation1'),
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "2. " + formData.get('recommendation2'),
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "3. " + formData.get('recommendation3'),
-                                }),
-                            ],
-                        }),
-
-                        // Overall Assessment
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Overall Assessment",
-                                    bold: true,
-                                    size: 28,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `Rating: ${formData.get('effectiveness')}`,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Explanation: " + formData.get('ratingExplanation'),
-                                }),
-                            ],
-                        }),
                     ],
                 }],
             });
+
+            console.log('Document created, preparing to save...'); // Debug line
 
             // Generate and save document
             const reviewerName = formData.get('reviewerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -433,13 +370,19 @@
             
             docx.Packer.toBlob(doc).then(blob => {
                 saveAs(blob, `peer_review_${reviewerName}_${writerName}_${date}.docx`);
+                console.log('Document saved!'); // Debug line
                 
                 // Optional: Reset form
                 if (confirm('Review downloaded! Would you like to clear the form?')) {
                     form.reset();
                 }
             });
+
+        } catch (error) {
+            console.error('Error generating document:', error);
+            alert('There was an error generating the document. Please check the console for details.');
         }
-    </script>
+    }
+</script>
 </body>
 </html>
