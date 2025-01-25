@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Report Peer Review Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .checkbox-group {
+            margin: 10px 0;
+        }
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .rating-group {
+            margin: 10px 0;
+        }
+        .rating-group label {
+            margin-right: 15px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <form id="peerReviewForm">
+        <h1>Interview Report Peer Review Form</h1>
+        
+        <div class="form-section">
+            <label for="reviewerName">Reviewer's Name:</label>
+            <input type="text" id="reviewerName" name="reviewerName" required>
+            
+            <label for="writerName">Writer's Name:</label>
+            <input type="text" id="writerName" name="writerName" required>
+        </div>
+
+        <div class="form-section">
+            <h2>Part 1: Structure and Content Check</h2>
+            
+            <h3>Opening Statement</h3>
+            <div class="checkbox-group">
+                <input type="checkbox" id="essentialInfo" name="essentialInfo">
+                <label for="essentialInfo">Includes essential information about interviewee</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="positionStatement" name="positionStatement">
+                <label for="positionStatement">Contains clear position statement</label>
+            </div>
+            <textarea placeholder="Comments on Opening Statement" name="openingComments"></textarea>
+
+            <h3>Methodology Section</h3>
+            <div class="checkbox-group">
+                <input type="checkbox" id="interviewLength" name="interviewLength">
+                <label for="interviewLength">Describes interview length</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="interviewLocation" name="interviewLocation">
+                <label for="interviewLocation">Describes interview location</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="interviewProcess" name="interviewProcess">
+                <label for="interviewProcess">Explains interview process clearly</label>
+            </div>
+            <textarea placeholder="Comments on Methodology" name="methodologyComments"></textarea>
+        </div>
+
+        <div class="form-section">
+            <h2>Part 2: Technical Elements</h2>
+            <label for="wordCount">Word count (600-900):</label>
+            <input type="number" id="wordCount" name="wordCount" min="0" max="2000">
+            
+            <h3>Format Review</h3>
+            <div class="checkbox-group">
+                <input type="checkbox" id="readableFont" name="readableFont">
+                <label for="readableFont">Readable font size</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="singleSpaced" name="singleSpaced">
+                <label for="singleSpaced">Single-spaced</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="professionalHeadings" name="professionalHeadings">
+                <label for="professionalHeadings">Professional headings/subheadings</label>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Part 3: Content Effectiveness</h2>
+            <label for="strongestAspects">What are the strongest aspects of this report?</label>
+            <textarea id="strongestAspects" name="strongestAspects"></textarea>
+
+            <label for="audienceAddress">How well does the report address its intended audience?</label>
+            <textarea id="audienceAddress" name="audienceAddress"></textarea>
+
+            <label for="informationGaps">Are there any gaps in information?</label>
+            <textarea id="informationGaps" name="informationGaps"></textarea>
+        </div>
+
+        <div class="form-section">
+            <h2>Part 4: Recommendations</h2>
+            <label for="recommendation1">Suggestion 1:</label>
+            <textarea id="recommendation1" name="recommendation1"></textarea>
+
+            <label for="recommendation2">Suggestion 2:</label>
+            <textarea id="recommendation2" name="recommendation2"></textarea>
+
+            <label for="recommendation3">Suggestion 3:</label>
+            <textarea id="recommendation3" name="recommendation3"></textarea>
+        </div>
+
+        <div class="form-section">
+            <h2>Part 5: Overall Assessment</h2>
+            <div class="rating-group">
+                <input type="radio" id="highlyEffective" name="effectiveness" value="highly">
+                <label for="highlyEffective">Highly Effective</label>
+
+                <input type="radio" id="effective" name="effectiveness" value="effective">
+                <label for="effective">Effective</label>
+
+                <input type="radio" id="somewhat" name="effectiveness" value="somewhat">
+                <label for="somewhat">Somewhat Effective</label>
+
+                <input type="radio" id="needsRevision" name="effectiveness" value="needs">
+                <label for="needsRevision">Needs Significant Revision</label>
+            </div>
+            <textarea placeholder="Explain your rating" name="ratingExplanation"></textarea>
+        </div>
+
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <script>
+        document.getElementById('peerReviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Here you could add functionality to save or email the form
+            alert('Review submitted! In a real implementation, this would save or send the data.');
+            
+            // Optional: Print form data to console for demonstration
+            const formData = new FormData(this);
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+        });
+    </script>
+</body>
+</html>
