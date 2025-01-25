@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Report Peer Review Form</title>
-    <!-- Add the new required libraries -->
-    <script src="https://unpkg.com/@docx/html@1.0.1/dist/html.umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.3/docx.min.js"></script>
+    <!-- Update these script imports -->
+    <script src="https://unpkg.com/docx@8.2.3/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
+    <script>
+        // Make docx available globally
+        window.docx = docx;
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -361,8 +363,15 @@
                 }],
             });
 
-            console.log('Document created, preparing to save...'); // Debug line
-
+async function generateWordDoc() {
+    console.log('Starting document generation...'); // Debug line
+    try {
+        if (typeof docx === 'undefined') {
+            console.error('docx library not loaded');
+            alert('Document generation library not loaded properly. Please refresh the page.');
+            return;
+        }
+        console.log('docx library found:', docx); // Debug line
             // Generate and save document
             const reviewerName = formData.get('reviewerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
             const writerName = formData.get('writerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
