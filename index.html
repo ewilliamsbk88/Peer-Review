@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Report Peer Review Form</title>
-    <!-- Update these script imports -->
-    <script src="https://unpkg.com/docx@8.2.3/build/index.js"></script>
+    <!-- Load libraries from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/docx/build/index.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script>
-        // Make docx available globally
-        window.docx = docx;
-    </script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,29 +22,41 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .checkbox-group {
-            margin: 10px 0;
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
         }
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
         textarea {
             width: 100%;
             padding: 8px;
-            margin: 5px 0;
+            margin-top: 5px;
+            margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            min-height: 60px;
         }
-        input[type="text"], input[type="number"], input[type="date"] {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .checkbox-group {
+            margin: 10px 0;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
         }
         .rating-group {
-            margin: 10px 0;
+            margin: 15px 0;
+        }
+        .rating-group input[type="radio"] {
+            margin-right: 5px;
         }
         .rating-group label {
             margin-right: 15px;
+            display: inline-block;
         }
         button {
             background-color: #4CAF50;
@@ -56,342 +65,109 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 20px;
+            font-size: 16px;
         }
         button:hover {
             background-color: #45a049;
         }
-        h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 5px;
-        }
-        .required::after {
-            content: " *";
-            color: red;
-        }
     </style>
 </head>
 <body>
+    <h1>Interview Report Peer Review Form</h1>
+    
     <form id="peerReviewForm">
-        <h1>Interview Report Peer Review Form</h1>
-        
         <div class="form-section">
-            <label for="reviewerName" class="required">Reviewer's Name:</label>
+            <h2>Basic Information</h2>
+            <label for="reviewerName">Reviewer Name:</label>
             <input type="text" id="reviewerName" name="reviewerName" required>
             
-            <label for="writerName" class="required">Writer's Name:</label>
+            <label for="writerName">Writer Name:</label>
             <input type="text" id="writerName" name="writerName" required>
             
-            <label for="date" class="required">Date:</label>
+            <label for="date">Date:</label>
             <input type="date" id="date" name="date" required>
         </div>
 
         <div class="form-section">
             <h2>Part 1: Structure and Content Check</h2>
-            
             <h3>Opening Statement</h3>
             <div class="checkbox-group">
-                <input type="checkbox" id="essentialInfo" name="opening_essentialInfo">
-                <label for="essentialInfo">Includes essential information about interviewee</label>
+                <input type="checkbox" id="opening_essentialInfo" name="opening_essentialInfo">
+                <label for="opening_essentialInfo">Includes essential information about interviewee</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="positionStatement" name="opening_positionStatement">
-                <label for="positionStatement">Contains clear position statement</label>
+                <input type="checkbox" id="opening_positionStatement" name="opening_positionStatement">
+                <label for="opening_positionStatement">Contains clear position statement</label>
             </div>
-            <textarea placeholder="Comments on Opening Statement" name="openingComments"></textarea>
+            <label for="openingComments">Comments:</label>
+            <textarea id="openingComments" name="openingComments"></textarea>
 
             <h3>Methodology Section</h3>
             <div class="checkbox-group">
-                <input type="checkbox" id="interviewLength" name="methodology_length">
-                <label for="interviewLength">Describes interview length</label>
+                <input type="checkbox" id="methodology_length" name="methodology_length">
+                <label for="methodology_length">Describes interview length</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="interviewLocation" name="methodology_location">
-                <label for="interviewLocation">Describes interview location</label>
+                <input type="checkbox" id="methodology_location" name="methodology_location">
+                <label for="methodology_location">Describes interview location</label>
             </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="interviewProcess" name="methodology_process">
-                <label for="interviewProcess">Explains interview process clearly</label>
-            </div>
-            <textarea placeholder="Comments on Methodology" name="methodologyComments"></textarea>
-
-            <h3>Issues and Conclusions</h3>
-            <div class="checkbox-group">
-                <input type="checkbox" id="keyTopics" name="issues_keyTopics">
-                <label for="keyTopics">Presents key topics from interview</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="supportedPosition" name="issues_supportedPosition">
-                <label for="supportedPosition">Supports position with evidence</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="relevantInfo" name="issues_relevantInfo">
-                <label for="relevantInfo">Information is relevant to new students</label>
-            </div>
-            <textarea placeholder="Comments on Issues and Conclusions" name="issuesComments"></textarea>
-
-            <h3>Closing Statement/Call to Action</h3>
-            <div class="checkbox-group">
-                <input type="checkbox" id="clearSteps" name="closing_clearSteps">
-                <label for="clearSteps">Provides clear next steps</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="audienceNeeds" name="closing_audienceNeeds">
-                <label for="audienceNeeds">Connects to target audience needs</label>
-            </div>
-            <textarea placeholder="Comments on Closing" name="closingComments"></textarea>
+            <label for="methodologyComments">Comments:</label>
+            <textarea id="methodologyComments" name="methodologyComments"></textarea>
         </div>
 
-        <div class="form-section">
-            <h2>Part 2: Technical Elements</h2>
-            <label for="wordCount">Word count (600-900):</label>
-            <input type="number" id="wordCount" name="wordCount" min="0" max="2000">
-            
-            <h3>Format Review</h3>
-            <div class="checkbox-group">
-                <input type="checkbox" id="readableFont" name="format_readableFont">
-                <label for="readableFont">Readable font size</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="singleSpaced" name="format_singleSpaced">
-                <label for="singleSpaced">Single-spaced</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="professionalHeadings" name="format_professionalHeadings">
-                <label for="professionalHeadings">Professional headings/subheadings</label>
-            </div>
-        </div>
-
-        <div class="form-section">
-            <h2>Part 3: Content Effectiveness</h2>
-            <label for="strongestAspects">What are the strongest aspects of this report?</label>
-            <textarea id="strongestAspects" name="strongestAspects"></textarea>
-
-            <label for="audienceAddress">How well does the report address its intended audience?</label>
-            <textarea id="audienceAddress" name="audienceAddress"></textarea>
-
-            <label for="informationGaps">Are there any gaps in information?</label>
-            <textarea id="informationGaps" name="informationGaps"></textarea>
-        </div>
-
-        <div class="form-section">
-            <h2>Part 4: Recommendations</h2>
-            <label for="recommendation1">Suggestion 1:</label>
-            <textarea id="recommendation1" name="recommendation1"></textarea>
-
-            <label for="recommendation2">Suggestion 2:</label>
-            <textarea id="recommendation2" name="recommendation2"></textarea>
-
-            <label for="recommendation3">Suggestion 3:</label>
-            <textarea id="recommendation3" name="recommendation3"></textarea>
-        </div>
-
-        <div class="form-section">
-            <h2>Part 5: Overall Assessment</h2>
-            <div class="rating-group">
-                <input type="radio" id="highlyEffective" name="effectiveness" value="highly">
-                <label for="highlyEffective">Highly Effective</label>
-
-                <input type="radio" id="effective" name="effectiveness" value="effective">
-                <label for="effective">Effective</label>
-
-                <input type="radio" id="somewhat" name="effectiveness" value="somewhat">
-                <label for="somewhat">Somewhat Effective</label>
-
-                <input type="radio" id="needsRevision" name="effectiveness" value="needs">
-                <label for="needsRevision">Needs Significant Revision</label>
-            </div>
-            <textarea placeholder="Explain your rating" name="ratingExplanation"></textarea>
-        </div>
-
-       <button type="button" onclick="generateWordDoc()" style="margin: 20px 0;">Download as Word Document</button>
+        <button type="button" onclick="generateDoc()" style="margin: 20px 0;">Download as Word Document</button>
     </form>
 
     <script>
-      <script>
-    async function generateWordDoc() {
-        console.log('Starting document generation...'); // Debug line
-        try {
-            const form = document.getElementById('peerReviewForm');
-            if (!form) {
-                console.error('Form not found');
-                return;
+        async function generateDoc() {
+            try {
+                console.log('Starting document generation...');
+                const form = document.getElementById('peerReviewForm');
+                const formData = new FormData(form);
+
+                // Create a new Document
+                const doc = new window.docx.Document({
+                    sections: [{
+                        properties: {},
+                        children: [
+                            new window.docx.Paragraph({
+                                children: [
+                                    new window.docx.TextRun({
+                                        text: "Peer Review Form",
+                                        bold: true,
+                                        size: 32,
+                                    }),
+                                ],
+                            }),
+                            new window.docx.Paragraph({
+                                children: [
+                                    new window.docx.TextRun({
+                                        text: `Reviewer: ${formData.get('reviewerName')}`,
+                                    }),
+                                ],
+                            }),
+                            new window.docx.Paragraph({
+                                children: [
+                                    new window.docx.TextRun({
+                                        text: `Writer: ${formData.get('writerName')}`,
+                                    }),
+                                ],
+                            }),
+                        ],
+                    }],
+                });
+
+                // Generate and save document
+                window.docx.Packer.toBlob(doc).then(blob => {
+                    saveAs(blob, 'peer_review.docx');
+                    console.log('Document saved!');
+                });
+
+            } catch (error) {
+                console.error('Error generating document:', error);
+                alert('Error generating document. Check console for details.');
             }
-            const formData = new FormData(form);
-            console.log('Form data collected'); // Debug line
-
-            // Create document
-            const doc = new docx.Document({
-                sections: [{
-                    properties: {},
-                    children: [
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Interview Report Peer Review",
-                                    bold: true,
-                                    size: 32,
-                                }),
-                            ],
-                            spacing: {
-                                after: 400,
-                            },
-                        }),
-
-                        // Basic Information
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `Reviewer: ${formData.get('reviewerName')}`,
-                                    size: 24,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `Writer: ${formData.get('writerName')}`,
-                                    size: 24,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `Date: ${formData.get('date')}`,
-                                    size: 24,
-                                }),
-                            ],
-                            spacing: {
-                                after: 400,
-                            },
-                        }),
-
-                        // Part 1: Structure and Content
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Part 1: Structure and Content Check",
-                                    bold: true,
-                                    size: 28,
-                                }),
-                            ],
-                            spacing: {
-                                after: 200,
-                            },
-                        }),
-
-                        // Opening Statement
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Opening Statement",
-                                    bold: true,
-                                    size: 24,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `☐ Includes essential information about interviewee: ${formData.get('opening_essentialInfo') ? '✓' : ''}`,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `☐ Contains clear position statement: ${formData.get('opening_positionStatement') ? '✓' : ''}`,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Comments: ",
-                                    bold: true,
-                                }),
-                                new docx.TextRun({
-                                    text: formData.get('openingComments') || '',
-                                }),
-                            ],
-                            spacing: {
-                                after: 200,
-                            },
-                        }),
-
-                        // Methodology Section
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Methodology Section",
-                                    bold: true,
-                                    size: 24,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `☐ Describes interview length: ${formData.get('methodology_length') ? '✓' : ''}`,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: `☐ Describes interview location: ${formData.get('methodology_location') ? '✓' : ''}`,
-                                }),
-                            ],
-                        }),
-                        new docx.Paragraph({
-                            children: [
-                                new docx.TextRun({
-                                    text: "Comments: ",
-                                    bold: true,
-                                }),
-                                new docx.TextRun({
-                                    text: formData.get('methodologyComments') || '',
-                                }),
-                            ],
-                            spacing: {
-                                after: 200,
-                            },
-                        }),
-                    ],
-                }],
-            });
-
-async function generateWordDoc() {
-    console.log('Starting document generation...'); // Debug line
-    try {
-        if (typeof docx === 'undefined') {
-            console.error('docx library not loaded');
-            alert('Document generation library not loaded properly. Please refresh the page.');
-            return;
         }
-        console.log('docx library found:', docx); // Debug line
-            // Generate and save document
-            const reviewerName = formData.get('reviewerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-            const writerName = formData.get('writerName').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-            const date = new Date().toISOString().split('T')[0];
-            
-            docx.Packer.toBlob(doc).then(blob => {
-                saveAs(blob, `peer_review_${reviewerName}_${writerName}_${date}.docx`);
-                console.log('Document saved!'); // Debug line
-                
-                // Optional: Reset form
-                if (confirm('Review downloaded! Would you like to clear the form?')) {
-                    form.reset();
-                }
-            });
-
-        } catch (error) {
-            console.error('Error generating document:', error);
-            alert('There was an error generating the document. Please check the console for details.');
-        }
-    }
-</script>
+    </script>
 </body>
 </html>
